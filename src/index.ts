@@ -1,9 +1,19 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 
-const app = new Hono()
+import contributions from "./api/contributions";
+import pinned from "./api/pinned";
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+const app = new Hono();
 
-export default app
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return c.json({ error: err.message }, err.status);
+  }
+  return c.json({ error: "Internal server error" }, 500);
+});
+
+app.route("/contributions", contributions);
+app.route("/pinned", pinned);
+
+export default app;
