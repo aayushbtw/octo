@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
 import contributions from "./api/contributions";
@@ -6,6 +7,13 @@ import pinned from "./api/pinned";
 import { rateLimit } from "./lib/rate-limit";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
+
+app.use(
+  cors({
+    origin: "*",
+    allowMethods: ["GET"],
+  })
+);
 
 app.use(
   rateLimit({
