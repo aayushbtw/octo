@@ -2,7 +2,17 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "octo",
   "main": "src/index.ts",
-  "compatibility_date": "2026-03-12"
+  "compatibility_date": "2026-03-12",
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "0",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
+  ]
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
