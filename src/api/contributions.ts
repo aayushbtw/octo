@@ -30,44 +30,33 @@ async function fetchHtml(username: string, year: number): Promise<string> {
   return res.text();
 }
 
+function parseCount(text: string): number {
+  const match = text.match(/^(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
 function parseHtml(html: string, year: number): ContributionData {
   const root = parse(html);
-  const contributions: Contribution[] = [];
-  let total = 0;
 
-  const cells = root.querySelectorAll("td.ContributionCalendar-day");
+  const tooltips = new Map(
+    root
+      .querySelectorAll("tool-tip[for]")
+      .map((tip) => [tip.getAttribute("for"), tip.text.trim()]),
+  );
 
-  // Build a map of tool-tip elements keyed by their `for` attribute (matches cell `id`)
-  const tooltipsByDayId: Record<string, ReturnType<typeof root.querySelector>> = {};
-  for (const tip of root.querySelectorAll("tool-tip")) {
-    const forAttr = tip.getAttribute("for");
-    if (forAttr) tooltipsByDayId[forAttr] = tip;
-  }
+  const contributions = root
+    .querySelectorAll("td.ContributionCalendar-day[data-date]")
+    .map((cell) => ({
+      date: cell.getAttribute("data-date") ?? "",
+      count: parseCount(tooltips.get(cell.getAttribute("id")) ?? ""),
+      level: parseInt(cell.getAttribute("data-level") ?? "0", 10),
+    }));
 
-  for (const cell of cells) {
-    const date = cell.getAttribute("data-date");
-    const level = parseInt(cell.getAttribute("data-level") ?? "0", 10);
-
-    if (!date) continue;
-
-    let count = 0;
-    const cellId = cell.getAttribute("id");
-
-    if (cellId && tooltipsByDayId[cellId]) {
-      const match = tooltipsByDayId[cellId].text.trim().match(/^(\d+)/);
-      if (match) count = parseInt(match[1], 10);
-    }
-
-    total += count;
-    contributions.push({ date, count, level });
-  }
-
-  // Try to parse total from the heading if available
   const heading = root.querySelector("h2.f4.text-normal.mb-2");
-  if (heading) {
-    const match = heading.text.match(/([\d,]+)\s+contributions?/);
-    if (match) total = parseInt(match[1].replace(/,/g, ""), 10);
-  }
+  const totalMatch = heading?.text.match(/([\d,]+)\s+contributions?/);
+  const total = totalMatch
+    ? parseInt(totalMatch[1].replace(/,/g, ""), 10)
+    : contributions.reduce((sum, c) => sum + c.count, 0);
 
   return { total, year, contributions };
 }
