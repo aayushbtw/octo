@@ -5,11 +5,7 @@ import contributions from "./api/contributions";
 import pinned from "./api/pinned";
 import { rateLimit } from "./lib/rate-limit";
 
-type Bindings = {
-  RATE_LIMITER: RateLimit;
-};
-
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<{ Bindings: CloudflareBindings }>();
 
 app.use(
   rateLimit({
