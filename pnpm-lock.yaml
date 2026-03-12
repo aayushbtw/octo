@@ -15,9 +15,6 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0
     devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20260312.1
-        version: 4.20260312.1
       wrangler:
         specifier: ^4.4.0
         version: 4.72.0(@cloudflare/workers-types@4.20260312.1)
@@ -573,7 +570,8 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20260310.1':
     optional: true
 
-  '@cloudflare/workers-types@4.20260312.1': {}
+  '@cloudflare/workers-types@4.20260312.1':
+    optional: true
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
