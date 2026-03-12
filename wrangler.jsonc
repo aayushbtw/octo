@@ -18,7 +18,7 @@
         "period": 60
       }
     }
-  ]
+  ],
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
@@ -47,8 +47,8 @@
   // "ai": {
   //   "binding": "AI"
   // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
 }
