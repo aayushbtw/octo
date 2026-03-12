@@ -37,27 +37,24 @@ function parseHtml(html: string, year: number): ContributionData {
 
   const cells = root.querySelectorAll("td.ContributionCalendar-day");
 
+  // Build a map of tool-tip elements keyed by their `for` attribute (matches cell `id`)
+  const tooltipsByDayId: Record<string, ReturnType<typeof root.querySelector>> = {};
+  for (const tip of root.querySelectorAll("tool-tip")) {
+    const forAttr = tip.getAttribute("for");
+    if (forAttr) tooltipsByDayId[forAttr] = tip;
+  }
+
   for (const cell of cells) {
     const date = cell.getAttribute("data-date");
     const level = parseInt(cell.getAttribute("data-level") ?? "0", 10);
 
     if (!date) continue;
 
-    const tooltipId = cell.getAttribute("aria-describedby");
     let count = 0;
+    const cellId = cell.getAttribute("id");
 
-    if (tooltipId) {
-      const tooltip = root.getElementById(tooltipId);
-      if (tooltip) {
-        const match = tooltip.text.match(/(\d+)\s+contribution/);
-        if (match) count = parseInt(match[1], 10);
-      }
-    }
-
-    // Fallback: try inner tool-tip or span text
-    if (count === 0) {
-      const innerText = cell.text.trim();
-      const match = innerText.match(/(\d+)\s+contribution/);
+    if (cellId && tooltipsByDayId[cellId]) {
+      const match = tooltipsByDayId[cellId].text.trim().match(/^(\d+)/);
       if (match) count = parseInt(match[1], 10);
     }
 
