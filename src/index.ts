@@ -14,6 +14,10 @@ app.use(
   })
 );
 
+app.notFound((c) => {
+  return c.json({ error: "Not found" }, 404);
+});
+
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
     return c.json({ error: err.message }, err.status);
