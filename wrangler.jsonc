@@ -3,6 +3,12 @@
   "name": "octo",
   "main": "src/index.ts",
   "compatibility_date": "2026-03-12",
+  "routes": [
+    {
+      "pattern": "octo.aayush.page",
+      "custom_domain": true
+    }
+  ],
   "ratelimits": [
     {
       "name": "RATE_LIMITER",
