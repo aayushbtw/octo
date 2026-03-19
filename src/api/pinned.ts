@@ -2,7 +2,10 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { parse } from "node-html-parser";
 
+import { cache } from "../lib/cache";
 import { fetchGitHub } from "../lib/github";
+
+const TWO_HOURS = 7200;
 
 interface PinnedRepo {
   repo: string;
@@ -63,7 +66,7 @@ function parseHtml(html: string): PinnedRepo[] {
 }
 
 const app = new Hono()
-  .get("/:username", async (c) => {
+  .get("/:username", cache({ ttl: TWO_HOURS }), async (c) => {
     const username = c.req.param("username");
     const html = await fetchHtml(username);
     const data = parseHtml(html);

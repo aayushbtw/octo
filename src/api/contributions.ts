@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { parse } from "node-html-parser";
 
+import { cache } from "../lib/cache";
 import { fetchGitHub } from "../lib/github";
+
+const SIX_HOURS = 21600;
+const ONE_HOUR = 3600;
 
 interface Contribution {
   date: string;
@@ -62,7 +66,12 @@ function parseHtml(html: string, year: number): ContributionData {
 }
 
 const app = new Hono()
-  .get("/:username", async (c) => {
+  .get("/:username", async (c, next) => {
+    const yearParam = c.req.query("y");
+    const year = yearParam ? parseInt(yearParam, 10) : new Date().getFullYear();
+    const isPastYear = year < new Date().getFullYear();
+    return cache({ ttl: isPastYear ? SIX_HOURS : ONE_HOUR })(c, next);
+  }, async (c) => {
     const username = c.req.param("username");
     const yearParam = c.req.query("y");
     const year = yearParam ? parseInt(yearParam, 10) : new Date().getFullYear();
