@@ -54,7 +54,8 @@ function parseHtml(html: string, year: number): ContributionData {
       date: cell.getAttribute("data-date") ?? "",
       count: parseCount(tooltips.get(cell.getAttribute("id")) ?? ""),
       level: parseInt(cell.getAttribute("data-level") ?? "0", 10),
-    }));
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   const heading = root.querySelector("h2.f4.text-normal.mb-2");
   const totalMatch = heading?.text.match(/([\d,]+)\s+contributions?/);
