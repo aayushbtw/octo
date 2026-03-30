@@ -1,6 +1,6 @@
 # Octo
 
-A lightweight API for structured GitHub profile data. Built on Cloudflare Workers.
+A lightweight API for structured GitHub profile data. Built with [Hono](https://hono.dev/) & [Cloudflare Workers](https://workers.cloudflare.com/).
 
 **Base URL:** `https://octo.aayush.page`
 
