@@ -16,7 +16,7 @@ export const rateLimit = ({
 	return createMiddleware(async (c, next) => {
 		const key = getRateLimitKey(c);
 		if (!key) {
-			throw new HTTPException(400, {message: "Missing rate limit key"})
+			throw new HTTPException(400, { message: "Missing rate limit key" });
 		}
 
 		const limiter = rateLimiter(c);
@@ -26,7 +26,7 @@ export const rateLimit = ({
 		c.set(RATE_LIMIT_CONTEXT_KEY, success);
 
 		if (!success) {
-			throw new HTTPException(429, {message: "Too many requests"})
+			throw new HTTPException(429, { message: "Too many requests" });
 		}
 
 		await next();

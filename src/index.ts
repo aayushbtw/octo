@@ -9,28 +9,28 @@ import { rateLimit } from "./lib/rate-limit";
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
 app.use(
-  cors({
-    origin: "*",
-    allowMethods: ["GET"],
-  })
+	cors({
+		origin: "*",
+		allowMethods: ["GET"],
+	}),
 );
 
 app.use(
-  rateLimit({
-    rateLimiter: (c) => c.env.RATE_LIMITER,
-    getRateLimitKey: (c) => c.req.header("CF-Connecting-IP") ?? "anonymous",
-  })
+	rateLimit({
+		rateLimiter: (c) => c.env.RATE_LIMITER,
+		getRateLimitKey: (c) => c.req.header("CF-Connecting-IP") ?? "anonymous",
+	}),
 );
 
 app.notFound((c) => {
-  return c.json({ error: "Not found" }, 404);
+	return c.json({ error: "Not found" }, 404);
 });
 
 app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    return c.json({ error: err.message }, err.status);
-  }
-  return c.json({ error: "Internal server error" }, 500);
+	if (err instanceof HTTPException) {
+		return c.json({ error: err.message }, err.status);
+	}
+	return c.json({ error: "Internal server error" }, 500);
 });
 
 app.route("/contributions", contributions);
