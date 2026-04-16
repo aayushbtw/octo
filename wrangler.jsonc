@@ -2,7 +2,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "octo",
 	"main": "src/index.ts",
-	"compatibility_date": "2026-03-12",
+	"compatibility_date": "2026-04-17",
 	"routes": [
 		{
 			"pattern": "octo.aayush.cv",
