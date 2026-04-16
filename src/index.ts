@@ -29,6 +29,13 @@ app.onError((err, c) => {
 	if (err instanceof HTTPException) {
 		return c.json({ error: err.message }, err.status);
 	}
+	console.error(
+		JSON.stringify({
+			message: "unhandled error",
+			error: err instanceof Error ? err.message : String(err),
+			path: new URL(c.req.url).pathname,
+		}),
+	);
 	return c.json({ error: "Internal server error" }, 500);
 });
 
