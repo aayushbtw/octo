@@ -17,7 +17,6 @@ app.use(
 
 app.use(
 	rateLimit({
-		rateLimiter: (c) => c.env.RATE_LIMITER,
 		getRateLimitKey: (c) => c.req.header("CF-Connecting-IP") ?? "anonymous",
 	}),
 );
