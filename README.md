@@ -3,8 +3,7 @@
 A lightweight API for structured GitHub profile data. Built with [Hono](https://hono.dev/) & [Cloudflare Workers](https://workers.cloudflare.com/).
 
 **Base URL:** `https://octo.aayush.cv`
-**Rate Limit:** 60 req/min per IP  
-**Cache:** 1 hour TTL per route
+**Rate Limit:** 60 req/min per IP
 
 ## Endpoints
 
@@ -12,9 +11,11 @@ A lightweight API for structured GitHub profile data. Built with [Hono](https://
 
 Returns the contribution calendar for a GitHub user.
 
-| Parameter | In    | Description                          |
-| --------- | ----- | ------------------------------------ |
-| `y`       | query | Year (defaults to current, min 2005) |
+| Parameter | In    | Description                                                   |
+| --------- | ----- | ------------------------------------------------------------- |
+| `y`       | query | Year (min 2005). Omit for GitHub's default rolling ~year view |
+
+**Cache:** 1h (current/rolling), 6h (past years)
 
 **Example:**
 
@@ -26,9 +27,8 @@ curl https://octo.aayush.cv/contributions/aayushbtw?y=2024
 ```json
 {
   "total": 1024,
-  "year": "2025",
   "contributions": [
-    { "date": "2025-01-01", "count": 5, "level": 2 }
+    { "date": "2025-04-20", "count": 5, "level": 2 }
   ]
 }
 ```
@@ -36,6 +36,8 @@ curl https://octo.aayush.cv/contributions/aayushbtw?y=2024
 ### `GET /pinned/:username`
 
 Returns the pinned repositories for a GitHub user.
+
+**Cache:** 2h
 
 **Example:**
 
