@@ -1,10 +1,14 @@
 const BASE_URL = "https://github.com";
 
-export async function fetchGitHub(path: string): Promise<Response> {
+export async function fetchGitHub(
+  path: string,
+  headers: Record<string, string> = {}
+): Promise<Response> {
   return await fetch(`${BASE_URL}/${path}`, {
     headers: {
       "User-Agent": "octo-cf-worker/1.0",
       Accept: "text/html",
+      ...headers,
     },
     redirect: "manual",
   });

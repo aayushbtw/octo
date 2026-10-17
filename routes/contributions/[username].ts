@@ -8,30 +8,62 @@ import { fetchGitHub } from "../../src/lib/github";
 const SIX_HOURS = 21_600;
 const ONE_HOUR = 3600;
 
-function parseYear(param: string | undefined): number | null {
-  if (param === undefined || param === "") {
-    return null;
+type Range = "all" | "last" | number[];
+
+const USERNAME = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/iu;
+
+function parseRange(query: string[] = []): Range {
+  const params = query.filter(Boolean);
+  if (params.length === 0) {
+    return "all";
   }
-  const year = Number.parseInt(param, 10);
+  if (params.length === 1 && (params[0] === "all" || params[0] === "last")) {
+    return params[0];
+  }
+  const years = [...new Set(params.map(Number))];
   const currentYear = new Date().getFullYear();
-  if (Number.isNaN(year) || year < 2005 || year > currentYear) {
+  if (
+    !years.every(
+      (year) => Number.isInteger(year) && year >= 2005 && year <= currentYear
+    )
+  ) {
     throw new HTTPException(400, { message: "Invalid year parameter" });
   }
-  return year;
+  return years;
 }
 
-async function fetchHtml(username: string, year: number | null) {
-  const range = year === null ? "" : `?from=${year}-01-01&to=${year}-12-31`;
-  const res = await fetchGitHub(`/users/${username}/contributions${range}`);
+async function fetchHtml(
+  path: string,
+  username: string,
+  headers?: Record<string, string>
+) {
+  const res = await fetchGitHub(path, headers);
 
   if (res.status === 404) {
-    throw new HTTPException(404, { message: "User not found" });
+    throw new HTTPException(404, {
+      message: `GitHub user "${username}" not found.`,
+    });
   }
   if (!res.ok) {
     throw new HTTPException(502, { message: "Bad gateway" });
   }
 
   return await res.text();
+}
+
+async function fetchYears(username: string) {
+  const html = await fetchHtml(
+    `/${username}?action=show&controller=profiles&tab=contributions&user_id=${username}`,
+    username,
+    { "X-Requested-With": "XMLHttpRequest" }
+  );
+  const years = [...html.matchAll(/id="year-link-(?<year>\d+)"/gu)].map(
+    (match) => Number(match.groups?.year)
+  );
+  if (years.length === 0) {
+    throw new HTTPException(502, { message: "Bad gateway" });
+  }
+  return years;
 }
 
 function parseHtml(html: string) {
@@ -64,14 +96,47 @@ function parseHtml(html: string) {
 
 export const GET = defineHandler(
   async (c, next) => {
-    const year = parseYear(c.req.query("y"));
-    const isPastYear = year !== null && year < new Date().getFullYear();
-    return await cache({ ttl: isPastYear ? SIX_HOURS : ONE_HOUR })(c, next);
+    const range = parseRange(c.req.queries("y"));
+    const currentYear = new Date().getFullYear();
+    const isPastOnly =
+      Array.isArray(range) && range.every((year) => year < currentYear);
+    return await cache({ ttl: isPastOnly ? SIX_HOURS : ONE_HOUR })(c, next);
   },
   async (c) => {
-    const year = parseYear(c.req.query("y"));
+    const range = parseRange(c.req.queries("y"));
     const { username } = c.req.param();
-    const html = await fetchHtml(username, year);
-    return c.json(parseHtml(html));
+    if (!USERNAME.test(username)) {
+      throw new HTTPException(404, {
+        message: `GitHub user "${username}" not found.`,
+      });
+    }
+
+    if (range === "last") {
+      const html = await fetchHtml(
+        `/users/${username}/contributions`,
+        username
+      );
+      const { total, contributions } = parseHtml(html);
+      return c.json({ total: { lastYear: total }, contributions });
+    }
+
+    const years = range === "all" ? await fetchYears(username) : range;
+    const calendars = await Promise.all(
+      years.map(async (year) =>
+        parseHtml(
+          await fetchHtml(
+            `/users/${username}/contributions?from=${year}-01-01&to=${year}-12-31`,
+            username
+          )
+        )
+      )
+    );
+
+    return c.json({
+      total: Object.fromEntries(
+        years.map((year, i) => [year, calendars[i].total])
+      ),
+      contributions: calendars.flatMap((calendar) => calendar.contributions),
+    });
   }
 );

@@ -8,27 +8,30 @@ A lightweight API for structured GitHub profile data. Built with [Hono](https://
 
 ### `GET /contributions/:username`
 
-Returns the contribution calendar for a GitHub user.
+Returns the contribution calendar for a GitHub user. The response matches [github-contributions-api v4](https://github-contributions-api.jogruber.de).
 
 | Parameter | In | Description |
 | --- | --- | --- |
-| `y` | query | Year (min 2005). Omit for GitHub's default rolling ~year view |
+| `y` | query | `all` (default), `last` (rolling year), or one or more years (`?y=2024&y=2025`) |
 
-**Cache:** 1h (current/rolling), 6h (past years)
+**Cache:** 6h (past years only), 1h otherwise
 
 **Example:**
 
 ```sh
 curl https://octo.aayush.cv/contributions/aayushbtw
-curl https://octo.aayush.cv/contributions/aayushbtw?y=2024
+curl 'https://octo.aayush.cv/contributions/aayushbtw?y=last'
+curl 'https://octo.aayush.cv/contributions/aayushbtw?y=2024'
 ```
 
 ```json
 {
-  "total": 1024,
-  "contributions": [{ "date": "2025-04-20", "count": 5, "level": 2 }]
+  "total": { "2024": 183, "2025": 1497 },
+  "contributions": [{ "date": "2024-01-01", "count": 0, "level": 0 }]
 }
 ```
+
+With `y=last`, `total` is `{ "lastYear": 4307 }`.
 
 ### `GET /pinned/:username`
 
