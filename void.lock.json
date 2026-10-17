@@ -11,7 +11,7 @@
     "ratelimits": [
       {
         "name": "RATE_LIMITER",
-        "namespace_id": "0",
+        "namespace_id": "1001",
         "simple": {
           "limit": 60,
           "period": 60
@@ -28,6 +28,7 @@
     "workers_dev": false
   },
   "resolved": {
+    "account_id": "908138c815eac9d3d4eb9c0f5d0ba8cc",
     "compatibility_date": "2026-04-16",
     "name": "octo",
     "observability": {
@@ -37,7 +38,7 @@
     "ratelimits": [
       {
         "name": "RATE_LIMITER",
-        "namespace_id": "0",
+        "namespace_id": "1001",
         "simple": {
           "limit": 60,
           "period": 60
@@ -51,8 +52,7 @@
         "custom_domain": true
       }
     ],
-    "workers_dev": false,
-    "account_id": "908138c815eac9d3d4eb9c0f5d0ba8cc"
+    "workers_dev": false
   },
-  "text": "{\n  \"compatibility_date\": \"2026-04-16\",\n  \"name\": \"octo\",\n  \"observability\": {\n    \"enabled\": true,\n    \"head_sampling_rate\": 1\n  },\n  \"ratelimits\": [\n    {\n      \"name\": \"RATE_LIMITER\",\n      \"namespace_id\": \"0\",\n      \"simple\": {\n        \"limit\": 60,\n        \"period\": 60\n      }\n    }\n  ],\n  \"preview_urls\": false,\n  \"routes\": [\n    {\n      \"pattern\": \"octo.aayush.cv\",\n      \"custom_domain\": true\n    }\n  ],\n  \"workers_dev\": false,\n  \"account_id\": \"908138c815eac9d3d4eb9c0f5d0ba8cc\"\n}\n"
+  "text": "{\n  \"account_id\": \"908138c815eac9d3d4eb9c0f5d0ba8cc\",\n  \"compatibility_date\": \"2026-04-16\",\n  \"name\": \"octo\",\n  \"observability\": {\n    \"enabled\": true,\n    \"head_sampling_rate\": 1\n  },\n  \"ratelimits\": [\n    {\n      \"name\": \"RATE_LIMITER\",\n      \"namespace_id\": \"1001\",\n      \"simple\": {\n        \"limit\": 60,\n        \"period\": 60\n      }\n    }\n  ],\n  \"preview_urls\": false,\n  \"routes\": [\n    {\n      \"pattern\": \"octo.aayush.cv\",\n      \"custom_domain\": true\n    }\n  ],\n  \"workers_dev\": false\n}\n"
 }

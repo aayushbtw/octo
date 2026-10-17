@@ -12,7 +12,7 @@ export default defineConfig({
     ratelimits: [
       {
         name: "RATE_LIMITER",
-        namespace_id: "0",
+        namespace_id: "1001",
         simple: { limit: 60, period: 60 },
       },
     ],
