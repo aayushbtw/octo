@@ -24,8 +24,26 @@ async function isAllowed(key: string): Promise<boolean> {
   }
 }
 
+// One IPv6 client owns a whole /64, so keying on the full address lets it rotate past the limit.
+function clientKey(ip: string): string {
+  if (!ip.includes(":")) {
+    return ip;
+  }
+  const [head = "", tail = ""] = ip.split("::");
+  const left = head ? head.split(":") : [];
+  const right = tail ? tail.split(":") : [];
+  const zeros = Array.from(
+    { length: 8 - left.length - right.length },
+    () => "0"
+  );
+  const prefix = [...left, ...zeros, ...right]
+    .slice(0, 4)
+    .map((group) => Number.parseInt(group, 16).toString(16));
+  return `${prefix.join(":")}::/64`;
+}
+
 export default defineMiddleware(async (c, next) => {
-  const key = c.req.header("CF-Connecting-IP") ?? "anonymous";
+  const key = clientKey(c.req.header("CF-Connecting-IP") ?? "anonymous");
 
   if (!(await isAllowed(key))) {
     throw new HTTPException(429, { message: "Too many requests" });
