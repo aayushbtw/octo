@@ -1,16 +1,34 @@
 {
-	"name": "octo",
-	"type": "module",
-	"scripts": {
-		"dev": "wrangler dev",
-		"deploy": "wrangler deploy --minify",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
-	},
-	"dependencies": {
-		"hono": "^4.12.12",
-		"node-html-parser": "^7.1.0"
-	},
-	"devDependencies": {
-		"wrangler": "^4.82.2"
-	}
+  "name": "octo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "check": "vp check",
+    "deploy": "void deploy --platform cloudflare",
+    "dev": "vp dev",
+    "fix": "vp check --fix"
+  },
+  "dependencies": {
+    "hono": "^4.13.13",
+    "node-html-parser": "^7.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261015.1",
+    "typescript": "catalog:",
+    "ultracite": "7.12.4",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "void": "1.1.11"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.4.2",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  }
 }

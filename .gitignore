@@ -5,6 +5,7 @@ dist/
 .yarn/
 !.yarn/releases
 .vscode/*
+!.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/*.code-snippets
@@ -35,3 +36,7 @@ lerna-debug.log*
 
 # Custom
 docs/
+.void/
+.void-wrangler.jsonc
+.env.*
+!.env.example

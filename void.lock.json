@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "source": {
+    "compatibility_date": "2026-04-16",
+    "name": "octo",
+    "observability": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "ratelimits": [
+      {
+        "name": "RATE_LIMITER",
+        "namespace_id": "0",
+        "simple": {
+          "limit": 60,
+          "period": 60
+        }
+      }
+    ],
+    "preview_urls": false,
+    "routes": [
+      {
+        "custom_domain": true,
+        "pattern": "octo.aayush.cv"
+      }
+    ],
+    "workers_dev": false
+  },
+  "resolved": {
+    "compatibility_date": "2026-04-16",
+    "name": "octo",
+    "observability": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "ratelimits": [
+      {
+        "name": "RATE_LIMITER",
+        "namespace_id": "0",
+        "simple": {
+          "limit": 60,
+          "period": 60
+        }
+      }
+    ],
+    "routes": [
+      {
+        "pattern": "octo.aayush.cv",
+        "custom_domain": true
+      }
+    ],
+    "preview_urls": false,
+    "workers_dev": false
+  },
+  "text": "{\n  \"compatibility_date\": \"2026-04-16\",\n  \"name\": \"octo\",\n  \"observability\": {\n    \"enabled\": true,\n    \"head_sampling_rate\": 1\n  },\n  \"ratelimits\": [\n    {\n      \"name\": \"RATE_LIMITER\",\n      \"namespace_id\": \"0\",\n      \"simple\": {\n        \"limit\": 60,\n        \"period\": 60\n      }\n    }\n  ],\n  \"routes\": [\n    {\n      \"pattern\": \"octo.aayush.cv\",\n      \"custom_domain\": true\n    }\n  ],\n  \"preview_urls\": false,\n  \"workers_dev\": false\n}\n"
+}

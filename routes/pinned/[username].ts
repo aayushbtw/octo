@@ -1,0 +1,79 @@
+import { HTTPException } from "hono/http-exception";
+import { parse } from "node-html-parser";
+import { defineHandler } from "void";
+
+import { cache } from "../../src/lib/cache";
+import { fetchGitHub } from "../../src/lib/github";
+
+const TWO_HOURS = 7200;
+
+interface PinnedRepo {
+  repo: string;
+  url: string;
+  description: string;
+  language: string;
+  stars: number;
+  forks: number;
+}
+
+async function fetchHtml(username: string): Promise<string> {
+  const res = await fetchGitHub(username);
+
+  if (res.status === 404) {
+    throw new HTTPException(404, { message: "User not found" });
+  }
+  if (!res.ok) {
+    throw new HTTPException(502, { message: "Bad gateway" });
+  }
+
+  return await res.text();
+}
+
+function parseHtml(html: string): PinnedRepo[] {
+  const root = parse(html);
+  const items = root.querySelectorAll(".pinned-item-list-item-content");
+  const pinned: PinnedRepo[] = [];
+
+  for (const item of items) {
+    const anchor = item.querySelector("a.text-bold");
+    if (!anchor) {
+      continue;
+    }
+
+    const repo = anchor.text.trim();
+    const href = anchor.getAttribute("href") ?? "";
+    const url = `https://github.com${href}`;
+
+    const descEl = item.querySelector("p.pinned-item-desc");
+    const description = descEl ? descEl.text.trim() : "";
+
+    const langEl = item.querySelector("[itemprop='programmingLanguage']");
+    const language = langEl ? langEl.text.trim() : "";
+
+    let stars = 0;
+    let forks = 0;
+
+    const links = item.querySelectorAll("a.pinned-item-meta");
+    for (const link of links) {
+      const linkHref = link.getAttribute("href") ?? "";
+      const count =
+        Number.parseInt(link.text.trim().replaceAll(",", ""), 10) || 0;
+      if (linkHref.includes("/stargazers")) {
+        stars = count;
+      } else if (linkHref.includes("/forks")) {
+        forks = count;
+      }
+    }
+
+    pinned.push({ repo, url, description, language, stars, forks });
+  }
+
+  return pinned;
+}
+
+export const GET = defineHandler(cache({ ttl: TWO_HOURS }), async (c) => {
+  const { username } = c.req.param();
+  const html = await fetchHtml(username);
+  const data = parseHtml(html);
+  return c.json(data);
+});
