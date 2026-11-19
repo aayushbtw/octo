@@ -10,7 +10,7 @@
     "fix": "vp check --fix"
   },
   "dependencies": {
-    "hono": "^4.13.13",
+    "hono": "^4.13.19",
     "node-html-parser": "^7.1.0"
   },
   "devDependencies": {
