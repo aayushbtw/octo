@@ -3,16 +3,11 @@ packages:
 
 catalog:
   typescript: ^7.0.2
-  vite: npm:@voidzero-dev/vite-plus-core@1.1.0
-  vite-plus: 1.1.0
+  vite: npm:@voidzero-dev/vite-plus-core@8.3.8000
+  vite-plus: 1.7.0
 allowBuilds:
   better-sqlite3: false
   esbuild: true
   workerd: true
 overrides:
   vite@*: "catalog:"
-peerDependencyRules:
-  allowAny:
-    - vite
-  allowedVersions:
-    vite: "*"
